@@ -7,6 +7,8 @@ namespace QuickOpenFile
     {
         public string Name { get; set; }
         public string FilePath { get; set; }
+        public string SolutionRelativePath { get; set; }
+
         public string Project { get; set; }
         public uint ItemId { get; set; }
         public int IconIndex { get; set; }
@@ -33,8 +35,9 @@ namespace QuickOpenFile
             // thread, just before adding to the listbox.
             listViewItem = new ListViewItem(Name);
             listViewItem.SubItems.Add(Project);
-            listViewItem.SubItems.Add(FilePath);
+            listViewItem.SubItems.Add(SolutionRelativePath);
             listViewItem.Tag = this;
+            listViewItem.ToolTipText = this.FilePath;
         }
 
         private ListViewItem listViewItem;

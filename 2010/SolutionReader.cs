@@ -24,6 +24,13 @@ namespace QuickOpenFile
             // Get the solution service so we can traverse each project hierarchy contained within.
             if (null != solution)
             {
+                string solutionDir;
+                string solutionFile;
+                string userOptsFile;
+
+                solution.GetSolutionInfo(out solutionDir, out solutionFile, out userOptsFile);
+                traversalState.CurrentSolutionDir = solutionDir;
+
                 IVsHierarchy solutionHierarchy = solution as IVsHierarchy;
                 if (null != solutionHierarchy)
                 {
@@ -158,8 +165,15 @@ namespace QuickOpenFile
             object objName;
             hr = hierarchy.GetProperty(itemid, (int)__VSHPROPID.VSHPROPID_Name, out objName);
 
-            if (recursionLevel == 0) traversalState.CurrentSolutionName = (string)objName;
-            if (recursionLevel == 1) traversalState.CurrentProjectName = (string)objName;
+            if (recursionLevel == 0)
+            {
+                traversalState.CurrentSolutionName = (string)objName;
+            }
+
+            if (recursionLevel == 1)
+            {
+                traversalState.CurrentProjectName = (string)objName;
+            }
 
             // skip non-member items (dependencies, files not referenced by the solution)
             object objIsNonMember;
@@ -186,6 +200,7 @@ namespace QuickOpenFile
                             if (File.Exists(filePath))
                             {
                                 sr.FilePath = filePath;
+                                sr.SolutionRelativePath = traversalState.SolutionRelativePath(filePath);
                                 sr.LastWriteTime = File.GetLastWriteTime(filePath);
                             }
                         }
